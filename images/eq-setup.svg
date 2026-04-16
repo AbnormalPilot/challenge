@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 140" role="img" aria-label="Problem setup equations">
+  <rect width="620" height="140" fill="#000"/>
+  <style>
+    .base { font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", Georgia, "Times New Roman", serif; fill: #ffffff; }
+    .var  { font-style: italic; }
+    .op   { fill: #ffffff; }
+    .num  { fill: #ffffff; }
+    .hi   { fill: #2997ff; font-weight: 600; }
+    .res  { fill: #3ddc97; font-weight: 700; }
+    .sm   { font-size: 13px; }
+  </style>
+  <g class="base" font-size="22">
+    <!-- line 1: Question -->
+    <text x="30" y="36">
+      <tspan>P (</tspan>
+      <tspan>|</tspan>
+      <tspan class="var">ℓ</tspan>
+      <tspan>|</tspan>
+      <tspan dx="6">&gt;</tspan>
+      <tspan dx="6">√3 )</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="8" class="hi">?</tspan>
+    </text>
+
+    <!-- line 2: chord length -->
+    <text x="30" y="78">
+      <tspan>|</tspan><tspan class="var">ℓ</tspan><tspan>|</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">2 · √( 1 − </tspan>
+      <tspan class="var">d</tspan>
+      <tspan baseline-shift="super" font-size="14">2</tspan>
+      <tspan> )</tspan>
+      <tspan dx="20" class="sm" fill="#9aa3b2">,     </tspan>
+      <tspan class="var">d</tspan>
+      <tspan dx="6">∈</tspan>
+      <tspan dx="6">[0, 1]</tspan>
+    </text>
+
+    <!-- line 3: long condition -->
+    <text x="30" y="120">
+      <tspan>|</tspan><tspan class="var">ℓ</tspan><tspan>|</tspan>
+      <tspan dx="6">&gt;</tspan>
+      <tspan dx="6">√3</tspan>
+      <tspan dx="14" class="hi">⇔</tspan>
+      <tspan dx="10" class="var">d</tspan>
+      <tspan dx="6">&lt;</tspan>
+      <tspan dx="6">1/2</tspan>
+    </text>
+  </g>
+</svg>

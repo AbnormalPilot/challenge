@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Method 3: Random Midpoint">
+  <rect width="240" height="240" fill="#000"/>
+  <!-- outer circle -->
+  <circle cx="120" cy="120" r="90" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.2"/>
+  <!-- inscribed equilateral triangle -->
+  <polygon points="120,30 197.94,165 42.06,165" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1"/>
+  <!-- inner disk of radius 45 (half outer radius) = critical boundary -->
+  <circle cx="120" cy="120" r="45" fill="#2997ff" fill-opacity="0.05" stroke="#2997ff" stroke-opacity="0.5" stroke-width="1" stroke-dasharray="3 3"/>
+  <!-- midpoint at d=0.4 (inside inner disk → long), direction 210° -->
+  <!-- M = (120 + 0.4*90*cos210°, 120 + 0.4*90*sin210°) = (120 - 31.18, 120 - 18) = (88.82, 102) -->
+  <!-- perp direction to radius: radius dir = (cos210, sin210) = (-0.866, -0.5); perp = (0.5, -0.866) -->
+  <!-- half chord = 90*sqrt(1-0.16) = 82.82; half*perp = (41.41, -71.72) -->
+  <!-- endpoints A = M + half*perp = (130.23, 30.28), B = M - half*perp = (47.41, 173.72) -->
+  <line x1="130.23" y1="30.28" x2="47.41" y2="173.72" stroke="#3ddc97" stroke-width="2.4"/>
+  <!-- radius from center to M shown faintly -->
+  <line x1="120" y1="120" x2="88.82" y2="102" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1"/>
+  <!-- midpoint dot -->
+  <circle cx="88.82" cy="102" r="5" fill="#2997ff"/>
+  <!-- r=1/2 label -->
+  <text x="120" y="80" fill="#2997ff" font-family="ui-monospace, SF Mono, Menlo, monospace" font-size="11" font-weight="700" text-anchor="middle">r = 1/2</text>
+  <!-- caption -->
+  <text x="120" y="228" fill="#ffffff" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Method 3 · Random Midpoint · P = 1/4</text>
+</svg>

@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000" id="meta-theme">
+<title>Bertrand's Paradox</title>
+<style>
+  :root {
+    /* Apple palette */
+    --black: #000000;
+    --gray-bg: #f5f5f7;
+    --near-black: #1d1d1f;
+    --white: #ffffff;
+
+    --apple-blue: #0071e3;
+    --link-blue: #0066cc;
+    --bright-blue: #2997ff;
+
+    --black-80: rgba(0,0,0,0.8);
+    --black-48: rgba(0,0,0,0.48);
+    --black-08: rgba(0,0,0,0.08);
+
+    --dark-1: #272729;
+    --dark-2: #262628;
+    --dark-3: #28282a;
+    --dark-4: #2a2a2d;
+    --dark-5: #242426;
+
+    --card-shadow: rgba(0,0,0,0.22) 3px 5px 30px 0px;
+
+    --green: #3ddc97;
+    --red: #ff6b6b;
+
+    /* Fonts */
+    --sf-display: "SF Pro Display", "SF Pro Icons", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --sf-text: "SF Pro Text", "SF Pro Icons", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--sf-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+    font-size: 17px;
+    letter-spacing: -0.374px;
+    line-height: 1.47;
+    transition: background .2s ease;
+  }
+  body { min-height: 100vh; min-height: 100dvh; }
+
+  :focus-visible {
+    outline: 2px solid var(--apple-blue);
+    outline-offset: 2px;
+  }
+
+  .app { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+
+  /* Glass navigation */
+  .nav-glass {
+    position: sticky; top: 0; z-index: 40;
+    height: 48px;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    display: flex; align-items: center;
+    padding: 0 20px;
+    padding-top: env(safe-area-inset-top, 0);
+  }
+  .nav-glass .nav-inner {
+    display: flex; align-items: center; gap: 16px;
+    width: 100%; max-width: 980px; margin: 0 auto;
+  }
+  .nav-glass .nav-title {
+    font-family: var(--sf-text);
+    font-size: 12px; font-weight: 400; color: var(--white);
+    letter-spacing: -0.08px;
+  }
+  .nav-glass .spacer { flex: 1; }
+  .nav-glass .nav-btn {
+    appearance: none; border: 0; cursor: pointer;
+    background: transparent; color: var(--white);
+    font: inherit; font-size: 12px; font-weight: 400;
+    padding: 6px 10px; border-radius: 6px;
+  }
+  .nav-glass .nav-btn:hover { color: rgba(255,255,255,0.7); }
+
+  /* Screens */
+  .screen { display: none; flex-direction: column; flex: 1; padding: 24px 20px; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+  .screen.active { display: flex; }
+  .screen.light { background: var(--black); color: var(--white); }
+  .container { width: 100%; max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; flex: 1; }
+
+  /* Display type */
+  h1.display, h1.display-xl {
+    font-family: var(--sf-display);
+    font-weight: 600;
+    color: inherit;
+    margin: 0;
+  }
+  h1.display-xl {
+    font-size: clamp(40px, 9vw, 56px);
+    line-height: 1.07;
+    letter-spacing: -0.28px;
+  }
+  h2.section {
+    font-family: var(--sf-display);
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 600;
+    line-height: 1.10;
+    letter-spacing: normal;
+    margin: 0 0 8px;
+  }
+  .sub-display {
+    font-family: var(--sf-display);
+    font-size: 21px; font-weight: 400;
+    line-height: 1.19; letter-spacing: 0.231px;
+  }
+  .caption {
+    font-family: var(--sf-text);
+    font-size: 14px; font-weight: 400;
+    line-height: 1.29; letter-spacing: -0.224px;
+  }
+  .micro {
+    font-family: var(--sf-text);
+    font-size: 12px; font-weight: 400;
+    line-height: 1.33; letter-spacing: -0.12px;
+  }
+
+  /* Landing */
+  #screen-landing { justify-content: center; align-items: center; text-align: center; gap: 28px; background: var(--black); color: var(--white); }
+  #screen-landing .hero-visual {
+    width: min(52vw, 220px); height: min(52vw, 220px);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04), transparent 70%);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #screen-landing .hero-visual svg { width: 100%; height: 100%; }
+  #screen-landing .sub {
+    font-family: var(--sf-display);
+    font-size: clamp(19px, 3.4vw, 24px);
+    font-weight: 400;
+    line-height: 1.19;
+    letter-spacing: 0.231px;
+    color: var(--white);
+    max-width: 540px;
+  }
+
+  /* Buttons — Apple pill + filled */
+  .btn {
+    appearance: none; border: 0; cursor: pointer;
+    font-family: var(--sf-text);
+    font-size: 17px; font-weight: 400;
+    letter-spacing: -0.374px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--apple-blue); color: var(--white);
+    border: 1px solid transparent;
+    transition: background .15s ease, opacity .15s ease, transform .08s ease;
+    min-height: 44px;
+    line-height: 1;
+  }
+  .btn:hover { background: #0077ed; }
+  .btn:active { transform: scale(.98); }
+  .btn.dark { background: var(--near-black); color: var(--white); }
+  .btn.dark:hover { background: #2c2c2e; }
+  .btn.light { background: var(--white); color: var(--near-black); }
+  .btn.light:hover { background: #f2f2f2; }
+
+  /* Pill variants (980px radius) */
+  .btn.pill { border-radius: 980px; padding: 12px 22px; }
+  .btn.pill-outline {
+    background: transparent;
+    color: var(--link-blue);
+    border: 1px solid var(--link-blue);
+    border-radius: 980px;
+    padding: 12px 22px;
+  }
+  .btn.pill-outline:hover { background: rgba(0,102,204,0.06); }
+  .screen#screen-landing .btn.pill-outline,
+  .screen.on-dark .btn.pill-outline {
+    color: var(--bright-blue); border-color: var(--bright-blue);
+  }
+  .screen#screen-landing .btn.pill-outline:hover,
+  .screen.on-dark .btn.pill-outline:hover { background: rgba(41,151,255,0.08); }
+
+  .btn.wide { width: 100%; }
+  .btn.lg { font-size: 18px; font-weight: 400; padding: 14px 28px; }
+  .btn.sm { padding: 6px 14px; min-height: 36px; font-size: 14px; }
+
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .btn-row .btn { flex: 0 1 auto; }
+  .btn-row.stack .btn { flex: 1 1 100%; }
+
+  /* Top bar inside screens */
+  .top {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 24px;
+  }
+  .top h2 { margin: 0; font-family: var(--sf-display); font-size: 21px; font-weight: 600; letter-spacing: 0.231px; line-height: 1.19; }
+  .top .spacer { flex: 1; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: transparent; border: 0; color: inherit;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 17px;
+    transition: background .15s;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.08); }
+
+  /* Method cards — light section */
+  .methods { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 720px) { .methods { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+  .method-card {
+    background: var(--dark-1);
+    border: 0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--white);
+    width: 100%;
+    transition: transform .15s ease, box-shadow .2s ease, background .15s;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    row-gap: 4px;
+    align-items: center;
+  }
+  .method-card:hover { background: var(--dark-3); }
+  @media (min-width: 720px) {
+    .method-card {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 24px 22px;
+      border-radius: 18px;
+    }
+  }
+  .method-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow); }
+  .method-card .m-eyebrow {
+    font-family: var(--sf-text); font-size: 11px; font-weight: 600;
+    letter-spacing: -0.08px; color: var(--bright-blue);
+    grid-column: 1; grid-row: 1;
+  }
+  .method-card .m-title {
+    font-family: var(--sf-display);
+    font-size: 19px; font-weight: 600;
+    line-height: 1.2; letter-spacing: -0.2px;
+    color: var(--white);
+    grid-column: 1; grid-row: 2;
+  }
+  @media (min-width: 720px) {
+    .method-card .m-title { font-size: 26px; font-weight: 400; letter-spacing: 0.196px; line-height: 1.14; }
+  }
+  .method-card .m-desc {
+    font-family: var(--sf-text);
+    font-size: 13px; font-weight: 400;
+    line-height: 1.4; letter-spacing: -0.2px;
+    color: rgba(255,255,255,0.7);
+    display: none;
+  }
+  @media (min-width: 720px) { .method-card .m-desc { display: block; font-size: 14px; } }
+  .method-card .m-theory {
+    font-family: var(--sf-text); font-size: 13px; font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--bright-blue);
+    grid-column: 2; grid-row: 1 / span 2;
+    align-self: center;
+    white-space: nowrap;
+  }
+  @media (min-width: 720px) {
+    .method-card .m-theory { margin-top: auto; grid-column: auto; grid-row: auto; align-self: auto; font-size: 14px; }
+  }
+
+  /* Simulation screen — dark */
+  #screen-sim { background: var(--black); color: var(--white); }
+  .sim-wrap {
+    background: var(--black);
+    border: 0;
+    border-radius: 18px;
+    padding: 0;
+    display: flex; justify-content: center; align-items: center;
+  }
+  canvas { display: block; touch-action: none; }
+  .sim-wrap canvas { max-width: 100%; height: auto; }
+
+  .sim-legend {
+    display: flex; gap: 20px; justify-content: center;
+    font-family: var(--sf-text);
+    font-size: 12px; letter-spacing: -0.12px;
+    color: rgba(255,255,255,0.6);
+    padding: 4px 2px 10px;
+  }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+  .dot.g { background: var(--green); }
+  .dot.r { background: var(--red); }
+
+  /* Method pill selector */
+  .method-pills {
+    display: inline-flex; gap: 2px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 980px; padding: 4px;
+    align-self: center;
+    margin-bottom: 8px;
+  }
+  .method-pills button {
+    appearance: none; border: 0; cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    font-family: var(--sf-text); font-size: 14px; font-weight: 400;
+    letter-spacing: -0.224px;
+    padding: 8px 16px;
+    border-radius: 980px;
+    transition: background .15s, color .15s;
+  }
+  .method-pills button:hover { color: var(--white); }
+  .method-pills button.on {
+    background: var(--white); color: var(--near-black);
+    font-weight: 600;
+  }
+
+  .screen.light .method-pills { background: rgba(0,0,0,0.05); }
+  .screen.light .method-pills button { color: var(--black-80); }
+  .screen.light .method-pills button.on { background: var(--near-black); color: var(--white); }
+
+  /* Stats — dark surface cards */
+  .stats {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+  }
+  @media (min-width: 560px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .stat {
+    background: var(--dark-1);
+    border: 0;
+    border-radius: 12px; padding: 14px 16px;
+    min-width: 0; overflow: hidden;
+  }
+  .stat .k {
+    font-family: var(--sf-text);
+    font-size: 12px; font-weight: 400; letter-spacing: -0.12px;
+    color: rgba(255,255,255,0.56);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .stat .v {
+    font-family: var(--sf-display);
+    font-size: 24px; font-weight: 600; line-height: 1.14;
+    letter-spacing: 0.196px;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: var(--white);
+  }
+  .stat.highlight .v { color: var(--green); }
+  .stat .theory { color: var(--bright-blue); }
+
+  /* Formula hint */
+  .formula-hint {
+    font-family: var(--sf-text);
+    font-size: 14px; letter-spacing: -0.224px;
+    color: rgba(255,255,255,0.72);
+    background: transparent;
+    border: 0;
+    padding: 8px 0;
+    text-align: center;
+  }
+  .formula-hint b { color: var(--white); font-weight: 600; }
+  .screen.light .formula-hint { color: var(--black-80); }
+  .screen.light .formula-hint b { color: var(--near-black); }
+
+  /* Controls */
+  .controls { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+
+  /* Drawer */
+  .drawer-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0);
+    display: flex; align-items: flex-end; justify-content: center;
+    z-index: 50;
+    visibility: hidden;
+    pointer-events: none;
+    /* CLOSE transition: backdrop fades 360ms, visibility snaps after drawer finishes */
+    transition:
+      background 360ms cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0s linear 380ms;
+  }
+  .drawer-overlay.show {
+    background: rgba(0,0,0,0.5);
+    visibility: visible;
+    pointer-events: auto;
+    /* OPEN transition: backdrop fades in, visibility instant */
+    transition:
+      background 360ms cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0s linear 0s;
+  }
+  .drawer {
+    background: var(--dark-1);
+    border: 0;
+    border-radius: 18px 18px 0 0;
+    width: 100%; max-width: 720px;
+    padding: 24px 24px calc(24px + env(safe-area-inset-bottom));
+    max-height: 85vh; overflow-y: auto;
+    color: var(--white);
+    box-shadow: var(--card-shadow);
+    transform: translateY(100%);
+    opacity: 0;
+    /* CLOSE: snappier slide-down (300ms) */
+    transition:
+      transform 300ms cubic-bezier(0.4, 0, 1, 1),
+      opacity 220ms cubic-bezier(0.4, 0, 1, 1);
+    will-change: transform, opacity;
+  }
+  .drawer-overlay.show .drawer {
+    transform: translateY(0);
+    opacity: 1;
+    /* OPEN: iOS spring-like easing, slightly longer (380ms) */
+    transition:
+      transform 380ms cubic-bezier(0.32, 0.72, 0, 1),
+      opacity 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .drawer-overlay, .drawer { transition: none; }
+  }
+  .drawer h3 {
+    margin: 0 0 12px;
+    font-family: var(--sf-display);
+    font-size: 28px; font-weight: 600;
+    line-height: 1.14; letter-spacing: 0.196px;
+    padding-right: 60px;
+  }
+  .drawer p {
+    color: rgba(255,255,255,0.72); font-family: var(--sf-text);
+    line-height: 1.47; font-size: 17px; letter-spacing: -0.374px;
+  }
+  .drawer .close {
+    appearance: none; border: 0; cursor: pointer;
+    position: absolute; top: 18px; right: 18px;
+    background: var(--dark-3); color: var(--white);
+    border-radius: 980px; padding: 8px 16px;
+    font-family: var(--sf-text);
+    font-size: 14px; font-weight: 400;
+    letter-spacing: -0.224px;
+  }
+  .drawer .close:hover { background: var(--dark-4); }
+  .drawer { position: relative; }
+
+  .deriv { font-family: var(--sf-text); font-size: 15px; line-height: 1.6; color: var(--white); letter-spacing: -0.2px; }
+  .deriv h4 {
+    margin: 20px 0 6px;
+    font-family: var(--sf-display);
+    font-size: 14px; font-weight: 600;
+    color: var(--bright-blue);
+    letter-spacing: 0.02em;
+  }
+  .deriv .step { color: rgba(255,255,255,0.7); margin: 4px 0; }
+  .deriv .eq {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    background: var(--dark-4);
+    border: 0;
+    padding: 10px 14px; border-radius: 8px; margin: 8px 0;
+    font-size: 14px; color: var(--white);
+    overflow-x: auto; white-space: nowrap;
+  }
+  .deriv .final {
+    font-family: "SF Mono", ui-monospace, monospace;
+    background: rgba(41,151,255,0.14);
+    border: 0;
+    padding: 12px 16px; border-radius: 10px; margin: 12px 0;
+    color: var(--bright-blue); font-weight: 600;
+  }
+  .deriv .tag {
+    display: inline-block;
+    background: var(--apple-blue); color: var(--white);
+    padding: 2px 10px; border-radius: 980px;
+    font-size: 12px; font-weight: 600;
+    margin-left: 6px;
+    letter-spacing: -0.12px;
+  }
+
+  /* QR full-screen (dark) */
+  .qr-modal-overlay {
+    position: fixed; inset: 0;
+    background: var(--black);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 60;
+    padding: 24px;
+    opacity: 0;
+    visibility: hidden; pointer-events: none;
+    transition: opacity 280ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 280ms;
+  }
+  .qr-modal-overlay.show {
+    opacity: 1;
+    visibility: visible; pointer-events: auto;
+    transition: opacity 280ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 0s;
+  }
+  .qr-modal {
+    width: 100%; max-width: 720px;
+    text-align: center;
+    color: var(--white);
+    position: relative;
+    transform: scale(0.96);
+    transition: transform 300ms cubic-bezier(0.4,0,1,1);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 20px;
+  }
+  .qr-modal-overlay.show .qr-modal {
+    transform: scale(1);
+    transition: transform 360ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .qr-close {
+    position: fixed; top: max(20px, env(safe-area-inset-top)); right: 20px;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--dark-3); color: var(--white);
+    border: 0; cursor: pointer;
+    font-size: 24px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    z-index: 1;
+    transition: background .15s;
+  }
+  .qr-close:hover { background: var(--dark-4); }
+  .qr-stage {
+    position: relative;
+    width: min(82vmin, 560px);
+    aspect-ratio: 1 / 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qr-box {
+    width: 74%;
+    aspect-ratio: 1 / 1;
+    background: var(--white);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px;
+  }
+  .qr-box img { width: 100%; height: 100%; display: block; }
+  .hand-arrow-below {
+    width: min(60vw, 240px);
+    height: auto;
+    display: block;
+    margin-top: -6px;
+    pointer-events: none;
+  }
+  .hand-arrow-below .f { opacity: 0; }
+  .hand-arrow-below .f1 { animation: flipbook1 720ms steps(1, start) infinite; }
+  .hand-arrow-below .f2 { animation: flipbook2 720ms steps(1, start) infinite; }
+  .hand-arrow-below .f3 { animation: flipbook3 720ms steps(1, start) infinite; }
+  .hand-arrow-below .f4 { animation: flipbook4 720ms steps(1, start) infinite; }
+  .hand-arrow-below .scribble {
+    animation: scribble-bob 720ms steps(2) infinite;
+    transform-origin: 28px 80px;
+  }
+  @keyframes flipbook1 { 0%, 25% { opacity: 1; } 25.01%, 100% { opacity: 0; } }
+  @keyframes flipbook2 { 0%, 25% { opacity: 0; } 25.01%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+  @keyframes flipbook3 { 0%, 50% { opacity: 0; } 50.01%, 75% { opacity: 1; } 75.01%, 100% { opacity: 0; } }
+  @keyframes flipbook4 { 0%, 75% { opacity: 0; } 75.01%, 100% { opacity: 1; } }
+  @keyframes scribble-bob {
+    0% { transform: rotate(-4deg) translate(0, 0); }
+    50% { transform: rotate(-3deg) translate(1px, -1px); }
+    100% { transform: rotate(-4deg) translate(0, 0); }
+  }
+  .qr-caption {
+    font-family: "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: clamp(14px, 2.4vw, 18px);
+    color: rgba(255,255,255,0.72);
+    letter-spacing: -0.2px;
+  }
+  .qr-title {
+    font-family: var(--sf-display);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.28px;
+    color: var(--white);
+    margin: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hand-arrow-below .f1 { opacity: 1; }
+    .hand-arrow-below .f2, .hand-arrow-below .f3, .hand-arrow-below .f4 { display: none; }
+    .hand-arrow-below .scribble { animation: none; }
+  }
+
+  /* Compare */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr; gap: 16px;
+  }
+  @media (min-width: 720px) { .compare-grid { grid-template-columns: repeat(3, 1fr); } }
+  .compare-cell {
+    background: var(--dark-1);
+    border: 0;
+    border-radius: 18px; padding: 20px;
+    display: flex; flex-direction: column; gap: 10px;
+    color: var(--white);
+  }
+  .compare-cell .c-title {
+    font-family: var(--sf-display);
+    font-weight: 400; font-size: 21px;
+    letter-spacing: 0.231px; line-height: 1.19;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .compare-cell .c-title b { font-weight: 600; color: var(--bright-blue); font-size: 14px; letter-spacing: -0.224px; }
+  .compare-cell .c-stat {
+    font-family: var(--sf-text);
+    font-size: 13px; letter-spacing: -0.224px;
+    color: rgba(255,255,255,0.65);
+    display: flex; justify-content: space-between; gap: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .compare-cell .c-stat b { color: var(--white); font-weight: 600; }
+  .compare-cell canvas { background: var(--black); border-radius: 12px; }
+
+  /* Utility */
+  .muted { color: var(--black-48); }
+  .screen.on-dark .muted { color: rgba(255,255,255,0.5); }
+  .hide { display: none !important; }
+
+  :fullscreen .screen { padding: 32px 24px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- LANDING — cinematic black -->
+  <section id="screen-landing" class="screen on-dark active">
+    <div class="container" style="justify-content:center; align-items:center; text-align:center; gap:32px; flex:1;">
+      <div class="hero-visual" aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
+          <polygon points="50,6 88,72 12,72" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
+          <line x1="20" y1="30" x2="75" y2="78" stroke="#3ddc97" stroke-width="1.2"/>
+          <line x1="18" y1="68" x2="62" y2="18" stroke="#ff6b6b" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <h1 class="display-xl">Bertrand's Paradox.</h1>
+      <div class="sub">Same question. Three correct answers.<br/>See randomness decide.</div>
+      <div class="btn-row" style="gap:14px;">
+        <button class="btn pill" id="btn-start-random">Start Simulation</button>
+        <button class="btn pill-outline" data-go="learn">Learn more ›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODS — light section -->
+  <section id="screen-methods" class="screen light">
+    <div class="container">
+      <div class="top">
+        <button class="icon-btn" data-go="landing" aria-label="Back">‹</button>
+        <h2>Pick a Method</h2>
+        <div class="spacer"></div>
+        <button class="icon-btn" data-go="compare" aria-label="Compare" title="Compare all three">⊞</button>
+      </div>
+      <p class="caption" style="max-width:560px; margin:0 0 20px; color:rgba(255,255,255,0.6);">Each method gives a different, mathematically correct probability.</p>
+      <div class="methods">
+        <button class="method-card" data-method="1">
+          <div class="m-eyebrow">Method 1</div>
+          <div class="m-title">Random Endpoints</div>
+          <div class="m-desc">Two random points on the boundary. Connect them.</div>
+          <div class="m-theory">P = 1/3 ≈ 0.333 ›</div>
+        </button>
+        <button class="method-card" data-method="2">
+          <div class="m-eyebrow">Method 2</div>
+          <div class="m-title">Random Radius</div>
+          <div class="m-desc">Random radius. Random midpoint along it. Chord perpendicular.</div>
+          <div class="m-theory">P = 1/2 = 0.500 ›</div>
+        </button>
+        <button class="method-card" data-method="3">
+          <div class="m-eyebrow">Method 3</div>
+          <div class="m-title">Random Midpoint</div>
+          <div class="m-desc">Midpoint uniform in the disk. Chord perpendicular to its radius.</div>
+          <div class="m-theory">P = 1/4 = 0.250 ›</div>
+        </button>
+      </div>
+      <div class="btn-row" style="margin-top:20px; justify-content:center;">
+        <button class="btn pill-outline" data-go="compare">Compare all three</button>
+        <button class="btn pill dark" id="btn-show-qr">Show QR</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIMULATION — cinematic black -->
+  <section id="screen-sim" class="screen on-dark">
+    <div class="container">
+      <div class="top">
+        <button class="icon-btn" data-go="methods" aria-label="Back">‹</button>
+        <h2 id="sim-title">Method 1</h2>
+        <div class="spacer"></div>
+        <button class="icon-btn" id="btn-info" aria-label="Info">ⓘ</button>
+        <button class="icon-btn" id="btn-fs" aria-label="Fullscreen">⛶</button>
+      </div>
+
+      <div class="method-pills" role="tablist">
+        <button data-method-switch="1" class="on">Endpoints · 1/3</button>
+        <button data-method-switch="2">Radius · 1/2</button>
+        <button data-method-switch="3">Midpoint · 1/4</button>
+      </div>
+
+      <div class="sim-legend">
+        <span><span class="dot g"></span>Long chord (&gt; √3·r)</span>
+        <span><span class="dot r"></span>Short chord</span>
+      </div>
+      <div class="sim-wrap">
+        <canvas id="cv" width="600" height="600"></canvas>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="k">Trials</div><div class="v" id="s-trials">0</div></div>
+        <div class="stat"><div class="k">Favorable</div><div class="v" id="s-fav">0</div></div>
+        <div class="stat highlight"><div class="k">Probability</div><div class="v" id="s-prob">0.000</div></div>
+        <div class="stat"><div class="k">Theoretical</div><div class="v theory" id="s-theory">0.333</div></div>
+      </div>
+
+      <div class="formula-hint" id="hint">Long chord iff both endpoints within 120° arc.</div>
+
+      <div class="controls">
+        <div class="btn-row">
+          <button class="btn pill-outline" data-run="1">Run 1</button>
+          <button class="btn pill-outline" data-run="100">Run 100</button>
+          <button class="btn pill-outline" data-run="1000">Run 1000</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn pill" id="btn-auto">Auto Run</button>
+          <button class="btn pill-outline" id="btn-reset">Reset</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARE — light section -->
+  <section id="screen-compare" class="screen light">
+    <div class="container">
+      <div class="top">
+        <button class="icon-btn" data-go="methods" aria-label="Back">‹</button>
+        <h2>Compare all three</h2>
+        <div class="spacer"></div>
+        <button class="icon-btn" id="btn-fs-cmp" aria-label="Fullscreen">⛶</button>
+      </div>
+      <div class="compare-grid" id="cmp-grid">
+        <!-- populated by JS -->
+      </div>
+      <div class="controls" style="margin-top:32px;">
+        <div class="btn-row">
+          <button class="btn pill-outline" data-cmp-run="1">Run 1</button>
+          <button class="btn pill-outline" data-cmp-run="100">Run 100</button>
+          <button class="btn pill-outline" data-cmp-run="1000">Run 1000</button>
+        </div>
+        <div class="btn-row">
+          <button class="btn pill" id="btn-cmp-auto">Auto Run all</button>
+          <button class="btn pill-outline" id="btn-cmp-reset">Reset all</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEARN DRAWER -->
+  <div class="drawer-overlay" id="drawer">
+    <div class="drawer">
+      <button class="close" data-close-drawer aria-label="Close">Close</button>
+      <h3 id="drawer-title">Why do three answers exist?</h3>
+      <div id="drawer-body">
+        <p>Bertrand (1889) asked: what is the probability that a random chord of a circle is longer than the side of the inscribed equilateral triangle?</p>
+        <p>Answer depends on what "random" means:</p>
+        <p><b>Method 1 — Random Endpoints.</b> Pick two angles uniformly on the circle. Probability <b>= 1/3</b>.</p>
+        <p><b>Method 2 — Random Radius.</b> Pick a radius, then a uniform point along it; chord is perpendicular. Probability <b>= 1/2</b>.</p>
+        <p><b>Method 3 — Random Midpoint.</b> Midpoint uniform across the disk. Chord is long iff midpoint lies inside inner disk of radius 1/2. Area ratio <b>= 1/4</b>.</p>
+        <p class="muted">The "paradox" is that "uniform random chord" has no unique meaning without specifying the measure. Each method uses a different sample space.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR FULLSCREEN -->
+  <div class="qr-modal-overlay" id="qr-modal">
+    <button class="qr-close" data-close-qr aria-label="Close">×</button>
+    <div class="qr-modal">
+      <h2 class="qr-title">Scan to try it yourself.</h2>
+      <div class="qr-stage">
+        <div class="qr-box">
+          <img id="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=2&data=https%3A%2F%2Fchallenge.himanshubuilds.in" alt="QR code"/>
+        </div>
+      </div>
+      <svg class="hand-arrow-below" viewBox="0 0 240 110" aria-hidden="true">
+        <defs>
+          <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="1.1"/></filter>
+        </defs>
+        <g class="f f1" filter="url(#rough)">
+          <path d="M 170 90 C 150 65, 130 40, 118 12" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M 118 12 L 108 24 M 118 12 L 128 22" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+        </g>
+        <g class="f f2" filter="url(#rough)">
+          <path d="M 172 92 C 152 66, 132 42, 120 14" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M 120 14 L 110 26 M 120 14 L 130 24" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+        </g>
+        <g class="f f3" filter="url(#rough)">
+          <path d="M 168 88 C 148 64, 128 38, 116 10" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M 116 10 L 106 22 M 116 10 L 127 21" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+        </g>
+        <g class="f f4" filter="url(#rough)">
+          <path d="M 170 90 C 150 65, 130 40, 118 12" fill="none" stroke="#ffffff" stroke-width="2.7" stroke-linecap="round"/>
+          <path d="M 118 12 L 107 23 M 118 12 L 129 23" fill="none" stroke="#ffffff" stroke-width="2.7" stroke-linecap="round"/>
+        </g>
+        <text class="scribble" x="28" y="80" font-family="Comic Sans MS, Marker Felt, cursive" font-size="22" fill="#ffffff" transform="rotate(-4 28 80)">scan me!</text>
+      </svg>
+      <div class="qr-caption">challenge.himanshubuilds.in</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------- Navigation ----------
+  const screens = {
+    landing: document.getElementById('screen-landing'),
+    methods: document.getElementById('screen-methods'),
+    sim: document.getElementById('screen-sim'),
+    compare: document.getElementById('screen-compare'),
+  };
+  function goto(name) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[name].classList.add('active');
+    document.body.dataset.screen = name;
+    document.getElementById('meta-theme').setAttribute('content', '#000000');
+    if (name === 'sim') requestAnimationFrame(resizeMainCanvas);
+    if (name === 'compare') requestAnimationFrame(initCompare);
+  }
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-go]');
+    if (!t) return;
+    const dest = t.getAttribute('data-go');
+    if (dest === 'learn') { openDrawer(); return; }
+    if (screens[dest]) goto(dest);
+  });
+
+  // ---------- Drawer ----------
+  const drawer = document.getElementById('drawer');
+  const drawerTitle = document.getElementById('drawer-title');
+  const drawerBody = document.getElementById('drawer-body');
+  const DEFAULT_DRAWER_HTML = drawerBody.innerHTML;
+  const DEFAULT_DRAWER_TITLE = drawerTitle.textContent;
+
+  function openDrawer() {
+    drawerTitle.textContent = DEFAULT_DRAWER_TITLE;
+    drawerBody.innerHTML = DEFAULT_DRAWER_HTML;
+    drawer.classList.add('show');
+  }
+  function closeDrawer() { drawer.classList.remove('show'); }
+  drawer.addEventListener('click', (e) => {
+    if (e.target === drawer || e.target.matches('[data-close-drawer]')) closeDrawer();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && drawer.classList.contains('show')) closeDrawer();
+  });
+
+  const DERIVATIONS = {
+    1: {
+      title: 'Method 1 — Random Endpoints',
+      html: `
+        <div class="deriv">
+          <div><b>Setup.</b> Pick two points uniformly on the circle boundary (radius 1). The chord is the segment joining them. <span class="tag">P = 1/3</span></div>
+
+          <h4>1. Fix one endpoint by rotational symmetry</h4>
+          <div class="step">Rotation invariance → WLOG fix θ₁ = 0. Then θ₂ ~ Uniform[0, 2π).</div>
+
+          <h4>2. Express chord length via central angle</h4>
+          <div class="step">Let Δ ∈ [0, π] be the minor central angle between the endpoints.</div>
+          <div class="eq">chord length = 2·sin(Δ / 2)</div>
+
+          <h4>3. Condition for "long"</h4>
+          <div class="step">Side of inscribed equilateral triangle = √3. Long iff:</div>
+          <div class="eq">2·sin(Δ/2) > √3  ⇔  sin(Δ/2) > √3/2  ⇔  Δ/2 > 60°  ⇔  Δ > 2π/3</div>
+
+          <h4>4. Distribution of Δ</h4>
+          <div class="step">With θ₂ ~ Uniform[0, 2π), the minor angle Δ = min(θ₂, 2π − θ₂) is uniform on [0, π], density 1/π.</div>
+
+          <h4>5. Compute probability</h4>
+          <div class="eq">P(Δ > 2π/3) = (π − 2π/3) / π = (π/3) / π</div>
+          <div class="final">P = 1/3  ≈ 0.3333</div>
+        </div>
+      `
+    },
+    2: {
+      title: 'Method 2 — Random Radius',
+      html: `
+        <div class="deriv">
+          <div><b>Setup.</b> Pick a random direction θ ~ Uniform[0, 2π), then a distance d ~ Uniform[0, 1] along that radius. The chord is perpendicular to the radius at that point. <span class="tag">P = 1/2</span></div>
+
+          <h4>1. Reduce to 1D by symmetry</h4>
+          <div class="step">Rotation invariance → probability depends only on d (the perpendicular distance from center to chord).</div>
+
+          <h4>2. Chord length from distance d</h4>
+          <div class="step">Pythagoras on the right triangle (center, foot, endpoint):</div>
+          <div class="eq">chord length = 2·√(1 − d²)</div>
+
+          <h4>3. Condition for "long"</h4>
+          <div class="eq">2·√(1 − d²) > √3  ⇔  1 − d² > 3/4  ⇔  d² < 1/4  ⇔  d < 1/2</div>
+
+          <h4>4. Compute probability</h4>
+          <div class="step">d ~ Uniform[0, 1] by construction, so:</div>
+          <div class="eq">P(d < 1/2) = 1/2</div>
+          <div class="final">P = 1/2  = 0.5000</div>
+        </div>
+      `
+    },
+    3: {
+      title: 'Method 3 — Random Midpoint',
+      html: `
+        <div class="deriv">
+          <div><b>Setup.</b> Pick the chord's midpoint M uniformly over the unit disk. The chord is perpendicular to OM at M. <span class="tag">P = 1/4</span></div>
+
+          <h4>1. Chord length from midpoint distance</h4>
+          <div class="step">Let d = |OM|. Same Pythagoras as Method 2:</div>
+          <div class="eq">chord length = 2·√(1 − d²)</div>
+
+          <h4>2. Condition for "long"</h4>
+          <div class="eq">chord > √3  ⇔  d < 1/2</div>
+          <div class="step">Long iff M lies inside the concentric disk of radius 1/2.</div>
+
+          <h4>3. Uniform over area → area ratio</h4>
+          <div class="step">Since M is uniform over the unit disk, probability = area ratio:</div>
+          <div class="eq">P(d < 1/2) = π·(1/2)² / π·(1)² = (1/4) / 1</div>
+          <div class="final">P = 1/4  = 0.2500</div>
+
+          <h4>Why ≠ Method 2?</h4>
+          <div class="step">Method 2 samples d uniformly on [0,1]. Method 3 samples M uniformly on area, so d has density 2d on [0,1] (more weight near the boundary). Different measures → different answers — the Bertrand paradox.</div>
+        </div>
+      `
+    },
+  };
+
+  function openDerivation(m) {
+    const d = DERIVATIONS[m];
+    if (!d) return;
+    drawerTitle.textContent = d.title;
+    drawerBody.innerHTML = d.html;
+    drawer.classList.add('show');
+  }
+
+  document.getElementById('btn-info').addEventListener('click', () => {
+    openDerivation(state.method);
+  });
+
+  // Start Simulation picks a random method
+  document.getElementById('btn-start-random').addEventListener('click', () => {
+    const m = 1 + Math.floor(Math.random() * 3);
+    setMethod(m);
+    goto('sim');
+  });
+
+  // ---------- Method selection -> sim ----------
+  document.querySelectorAll('[data-method]').forEach(el => {
+    el.addEventListener('click', () => {
+      setMethod(parseInt(el.getAttribute('data-method'), 10));
+      goto('sim');
+    });
+  });
+
+  // ---------- Simulation state ----------
+  const THEORY = { 1: 1/3, 2: 1/2, 3: 1/4 };
+  const HINTS = {
+    1: 'Long iff arc gap &lt; 120°. Two uniform endpoints on boundary.',
+    2: 'Long iff midpoint distance <b>d &lt; 1/2</b>. Uniform along random radius.',
+    3: 'Long iff midpoint inside inner disk of radius <b>1/2</b>. Area ratio = 1/4.',
+  };
+  const TITLES = { 1: 'Method 1 · Endpoints', 2: 'Method 2 · Radius', 3: 'Method 3 · Midpoint' };
+  const THRESHOLD_SQ = 3; // (√3)^2 for unit circle; chord long iff len^2 > 3
+
+  const state = {
+    method: 1,
+    trials: 0,
+    fav: 0,
+    chords: [],      // recent chords to draw
+    maxDraw: 400,    // cap stored chords for perf
+    auto: false,
+    anim: null,      // active single-chord animation
+    animMs: 700,     // base animation duration
+    animMsByMethod: { 1: 1100, 2: 700, 3: 700 },
+  };
+
+  // ---------- Canvas ----------
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+
+  function resizeMainCanvas() {
+    const wrap = cv.parentElement;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const maxW = wrap.clientWidth;
+    // Reserve space for top bar, pills, legend, stats, hint, controls (~420px)
+    const maxH = Math.max(240, vh - 420);
+    const s = Math.max(240, Math.min(maxW, maxH, 560));
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = s * dpr;
+    cv.height = s * dpr;
+    cv.style.width = s + 'px';
+    cv.style.height = s + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    redraw();
+  }
+  window.addEventListener('resize', () => {
+    if (screens.sim.classList.contains('active')) resizeMainCanvas();
+    if (screens.compare.classList.contains('active')) resizeCompare();
+  });
+
+  // ---------- Chord sampling ----------
+  function sampleChord(method) {
+    // Returns {x1,y1,x2,y2,long,mid:{x,y}} in unit circle coords (r=1, center 0)
+    let x1, y1, x2, y2;
+    if (method === 1) {
+      const a = Math.random() * 2 * Math.PI;
+      const b = Math.random() * 2 * Math.PI;
+      x1 = Math.cos(a); y1 = Math.sin(a);
+      x2 = Math.cos(b); y2 = Math.sin(b);
+    } else if (method === 2) {
+      const theta = Math.random() * 2 * Math.PI;
+      const d = Math.random(); // 0..1, distance from center
+      const mx = Math.cos(theta) * d;
+      const my = Math.sin(theta) * d;
+      const half = Math.sqrt(Math.max(0, 1 - d*d));
+      // perpendicular direction
+      const px = -Math.sin(theta), py = Math.cos(theta);
+      x1 = mx + px*half; y1 = my + py*half;
+      x2 = mx - px*half; y2 = my - py*half;
+    } else {
+      // Method 3: uniform midpoint in disk
+      const u = Math.random();
+      const theta = Math.random() * 2 * Math.PI;
+      const d = Math.sqrt(u); // r = sqrt(U)
+      const mx = Math.cos(theta) * d;
+      const my = Math.sin(theta) * d;
+      const half = Math.sqrt(Math.max(0, 1 - d*d));
+      const px = -Math.sin(theta), py = Math.cos(theta);
+      x1 = mx + px*half; y1 = my + py*half;
+      x2 = mx - px*half; y2 = my - py*half;
+    }
+    const dx = x2 - x1, dy = y2 - y1;
+    const lenSq = dx*dx + dy*dy;
+    const long = lenSq > THRESHOLD_SQ;
+    return { x1, y1, x2, y2, long };
+  }
+
+  // ---------- Drawing ----------
+  const THEME_DARK = {
+    ring: 'rgba(255,255,255,0.4)',
+    tri: 'rgba(255,255,255,0.18)',
+    accent: '#2997ff',
+    accentDim: 'rgba(41,151,255,0.35)',
+    text: '#ffffff',
+    chordLong: 'rgba(61,220,151,0.6)',
+    chordShort: 'rgba(255,107,107,0.5)',
+  };
+  const THEME_LIGHT = {
+    ring: 'rgba(0,0,0,0.35)',
+    tri: 'rgba(0,0,0,0.15)',
+    accent: '#0071e3',
+    accentDim: 'rgba(0,113,227,0.35)',
+    text: '#1d1d1f',
+    chordLong: 'rgba(61,200,130,0.7)',
+    chordShort: 'rgba(230,70,70,0.65)',
+  };
+
+  function drawCircle(ctx2, cx, cy, r, theme) {
+    theme = theme || THEME_DARK;
+    ctx2.strokeStyle = theme.ring;
+    ctx2.lineWidth = 1.2;
+    ctx2.beginPath();
+    ctx2.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx2.stroke();
+    ctx2.strokeStyle = theme.tri;
+    ctx2.lineWidth = 1;
+    ctx2.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const a = -Math.PI/2 + i * (2*Math.PI/3);
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      if (i === 0) ctx2.moveTo(x, y); else ctx2.lineTo(x, y);
+    }
+    ctx2.closePath();
+    ctx2.stroke();
+  }
+
+  function redraw() {
+    const w = cv.clientWidth, h = cv.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    const cx = w/2, cy = h/2;
+    const r = Math.min(w, h) * 0.46;
+    drawCircle(ctx, cx, cy, r, THEME_DARK);
+    ctx.lineWidth = 1;
+    for (const c of state.chords) {
+      ctx.strokeStyle = c.long ? THEME_DARK.chordLong : THEME_DARK.chordShort;
+      ctx.beginPath();
+      ctx.moveTo(cx + c.x1*r, cy + c.y1*r);
+      ctx.lineTo(cx + c.x2*r, cy + c.y2*r);
+      ctx.stroke();
+    }
+    if (state.anim) drawAnim(state.anim, cx, cy, r);
+  }
+
+  function drawAnim(a, cx, cy, r) {
+    const totalMs = state.animMsByMethod[a.method] || state.animMs;
+    drawAnimOn(ctx, a, cx, cy, r, totalMs);
+  }
+
+  function drawAnimOn(ctx2, a, cx, cy, r, totalMs) {
+    const t = Math.min(1, (performance.now() - a.startT) / totalMs);
+    const c = a.chord;
+    const method = a.method;
+    const mx = (c.x1 + c.x2) / 2;
+    const my = (c.y1 + c.y2) / 2;
+    const color = c.long ? '#3ddc97' : '#ff6b6b';
+
+    if (method === 1) {
+      const a1 = Math.atan2(c.y1, c.x1);
+      const a2 = Math.atan2(c.y2, c.x2);
+      let diff = a2 - a1;
+      while (diff > Math.PI) diff -= 2*Math.PI;
+      while (diff < -Math.PI) diff += 2*Math.PI;
+      const arcDeg = Math.abs(diff) * 180 / Math.PI;
+      const isLong = arcDeg > 120;
+
+      const pa = Math.min(1, t / 0.2);
+      const pb = t > 0.2 ? Math.min(1, (t - 0.2) / 0.2) : 0;
+
+      ctx2.fillStyle = 'rgba(41,151,255,' + (0.4 + 0.6*pa) + ')';
+      ctx2.beginPath(); ctx2.arc(cx + c.x1*r, cy + c.y1*r, 3 + 4*pa, 0, Math.PI*2); ctx2.fill();
+      if (pb > 0) {
+        ctx2.fillStyle = 'rgba(41,151,255,' + (0.4 + 0.6*pb) + ')';
+        ctx2.beginPath(); ctx2.arc(cx + c.x2*r, cy + c.y2*r, 3 + 4*pb, 0, Math.PI*2); ctx2.fill();
+      }
+
+      if (t > 0.4) {
+        const pc = Math.min(1, (t - 0.4) / 0.3);
+        const sweep = diff * pc;
+        const endA = a1 + sweep;
+        ctx2.strokeStyle = isLong ? 'rgba(61,220,151,0.9)' : 'rgba(255,107,107,0.9)';
+        ctx2.lineWidth = 4;
+        ctx2.beginPath();
+        ctx2.arc(cx, cy, r, a1, endA, sweep < 0);
+        ctx2.stroke();
+
+        ctx2.strokeStyle = 'rgba(41,151,255,0.35)';
+        ctx2.lineWidth = 1;
+        ctx2.setLineDash([4, 4]);
+        ctx2.beginPath();
+        ctx2.moveTo(cx, cy);
+        ctx2.lineTo(cx + c.x1*r, cy + c.y1*r);
+        ctx2.moveTo(cx, cy);
+        ctx2.lineTo(cx + Math.cos(endA)*r, cy + Math.sin(endA)*r);
+        ctx2.stroke();
+        ctx2.setLineDash([]);
+
+        if (pc > 0.3) {
+          const midA = a1 + diff * 0.5;
+          const lx = cx + Math.cos(midA) * r * 0.28;
+          const ly = cy + Math.sin(midA) * r * 0.28;
+          ctx2.fillStyle = isLong ? '#3ddc97' : '#ff6b6b';
+          ctx2.font = 'bold 14px ui-monospace, monospace';
+          ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle';
+          ctx2.fillText(arcDeg.toFixed(0) + '°', lx, ly);
+          ctx2.font = '10px -apple-system, sans-serif';
+          ctx2.fillStyle = 'rgba(154,163,178,0.9)';
+          ctx2.fillText(isLong ? '> 120°' : '≤ 120°', lx, ly + 14);
+        }
+      }
+
+      if (t > 0.7) {
+        const pd = (t - 0.7) / 0.3;
+        const gx = c.x1 + (c.x2 - c.x1) * pd;
+        const gy = c.y1 + (c.y2 - c.y1) * pd;
+        ctx2.strokeStyle = color; ctx2.lineWidth = 2.5;
+        ctx2.beginPath();
+        ctx2.moveTo(cx + c.x1*r, cy + c.y1*r);
+        ctx2.lineTo(cx + gx*r, cy + gy*r);
+        ctx2.stroke();
+      }
+    } else if (method === 2) {
+      const theta = Math.atan2(my, mx);
+      const bx = Math.cos(theta), by = Math.sin(theta);
+      const pa = Math.min(1, t / 0.4);
+      ctx2.strokeStyle = 'rgba(41,151,255,0.7)';
+      ctx2.lineWidth = 1.5;
+      ctx2.setLineDash([5, 4]);
+      ctx2.beginPath();
+      ctx2.moveTo(cx, cy);
+      ctx2.lineTo(cx + bx*r*pa, cy + by*r*pa);
+      ctx2.stroke();
+      ctx2.setLineDash([]);
+      if (t > 0.4) {
+        const pb = Math.min(1, (t - 0.4) / 0.2);
+        ctx2.fillStyle = 'rgba(41,151,255,0.95)';
+        ctx2.beginPath(); ctx2.arc(cx + mx*r, cy + my*r, 3 + 3*pb, 0, Math.PI*2); ctx2.fill();
+      }
+      if (t > 0.6) {
+        const pc = (t - 0.6) / 0.4;
+        const gx1 = mx + (c.x1 - mx) * pc, gy1 = my + (c.y1 - my) * pc;
+        const gx2 = mx + (c.x2 - mx) * pc, gy2 = my + (c.y2 - my) * pc;
+        ctx2.strokeStyle = color; ctx2.lineWidth = 2.5;
+        ctx2.beginPath();
+        ctx2.moveTo(cx + gx1*r, cy + gy1*r);
+        ctx2.lineTo(cx + gx2*r, cy + gy2*r);
+        ctx2.stroke();
+      }
+    } else {
+      ctx2.strokeStyle = 'rgba(41,151,255,0.22)';
+      ctx2.setLineDash([3, 3]); ctx2.lineWidth = 1;
+      ctx2.beginPath(); ctx2.arc(cx, cy, r * 0.5, 0, Math.PI*2); ctx2.stroke();
+      ctx2.setLineDash([]);
+      const pa = Math.min(1, t / 0.5);
+      ctx2.fillStyle = 'rgba(41,151,255,' + (0.4 + 0.6*pa) + ')';
+      ctx2.beginPath(); ctx2.arc(cx + mx*r, cy + my*r, 3 + 4*pa, 0, Math.PI*2); ctx2.fill();
+      if (t > 0.5) {
+        const pc = (t - 0.5) / 0.5;
+        const gx1 = mx + (c.x1 - mx) * pc, gy1 = my + (c.y1 - my) * pc;
+        const gx2 = mx + (c.x2 - mx) * pc, gy2 = my + (c.y2 - my) * pc;
+        ctx2.strokeStyle = color; ctx2.lineWidth = 2.5;
+        ctx2.beginPath();
+        ctx2.moveTo(cx + gx1*r, cy + gy1*r);
+        ctx2.lineTo(cx + gx2*r, cy + gy2*r);
+        ctx2.stroke();
+      }
+    }
+  }
+
+  function animateOne(onDone) {
+    const chord = sampleChord(state.method);
+    state.anim = { method: state.method, chord, startT: performance.now() };
+    const loop = () => {
+      if (!state.anim) return;
+      const elapsed = performance.now() - state.anim.startT;
+      redraw();
+      if (elapsed >= (state.animMsByMethod[state.method] || state.animMs)) {
+        const c = state.anim.chord;
+        state.anim = null;
+        addChord(c);
+        updateStats();
+        redraw();
+        onDone && onDone();
+      } else {
+        requestAnimationFrame(loop);
+      }
+    };
+    requestAnimationFrame(loop);
+  }
+
+  // ---------- Stats ----------
+  function updateStats() {
+    document.getElementById('s-trials').textContent = state.trials.toLocaleString();
+    document.getElementById('s-fav').textContent = state.fav.toLocaleString();
+    const p = state.trials ? state.fav / state.trials : 0;
+    document.getElementById('s-prob').textContent = p.toFixed(3);
+    document.getElementById('s-theory').textContent = THEORY[state.method].toFixed(3);
+  }
+
+  function addChord(c) {
+    state.trials++;
+    if (c.long) state.fav++;
+    state.chords.push(c);
+    if (state.chords.length > state.maxDraw) state.chords.shift();
+  }
+
+  function runN(n) {
+    if (n === 1) { animateOne(); return; }
+    state.anim = null;
+    for (let i = 0; i < n; i++) addChord(sampleChord(state.method));
+    redraw();
+    updateStats();
+  }
+
+  function setMethod(m) {
+    state.method = m;
+    state.trials = 0; state.fav = 0; state.chords = []; state.anim = null;
+    document.querySelectorAll('[data-method-switch]').forEach(b => {
+      b.classList.toggle('on', parseInt(b.getAttribute('data-method-switch'),10) === m);
+    });
+    document.getElementById('sim-title').textContent = TITLES[m];
+    document.getElementById('hint').innerHTML = HINTS[m];
+    updateStats();
+    redraw();
+  }
+
+  // ---------- Controls wiring ----------
+  document.querySelectorAll('[data-run]').forEach(b => {
+    b.addEventListener('click', () => runN(parseInt(b.getAttribute('data-run'),10)));
+  });
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    stopAuto();
+    state.trials = 0; state.fav = 0; state.chords = []; state.anim = null;
+    redraw(); updateStats();
+  });
+  document.querySelectorAll('[data-method-switch]').forEach(b => {
+    b.addEventListener('click', () => {
+      stopAuto();
+      setMethod(parseInt(b.getAttribute('data-method-switch'),10));
+    });
+  });
+  document.querySelectorAll('#speed-seg button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#speed-seg button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      state.speed = b.getAttribute('data-speed');
+    });
+  });
+
+  function stopAuto() {
+    state.auto = false;
+    state.anim = null;
+    document.getElementById('btn-auto').textContent = 'Auto Run';
+    document.getElementById('btn-auto').classList.add('primary');
+    redraw();
+  }
+  function startAuto() {
+    state.auto = true;
+    document.getElementById('btn-auto').textContent = 'Stop';
+    document.getElementById('btn-auto').classList.remove('primary');
+    const chain = () => {
+      if (!state.auto) return;
+      animateOne(chain);
+    };
+    chain();
+  }
+  document.getElementById('btn-auto').addEventListener('click', () => {
+    state.auto ? stopAuto() : startAuto();
+  });
+
+  // ---------- Fullscreen / Presentation ----------
+  function toggleFs(el) {
+    if (!document.fullscreenElement) (el || document.documentElement).requestFullscreen?.();
+    else document.exitFullscreen?.();
+  }
+  document.getElementById('btn-fs').addEventListener('click', () => toggleFs(document.documentElement));
+  document.getElementById('btn-fs-cmp').addEventListener('click', () => toggleFs(document.documentElement));
+
+  // ---------- QR Modal ----------
+  const qrModal = document.getElementById('qr-modal');
+  function openQR() { qrModal.classList.add('show'); }
+  function closeQR() { qrModal.classList.remove('show'); }
+  document.getElementById('btn-show-qr').addEventListener('click', openQR);
+  qrModal.addEventListener('click', (e) => {
+    if (e.target === qrModal || e.target.matches('[data-close-qr]')) closeQR();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && qrModal.classList.contains('show')) closeQR();
+  });
+
+  // ---------- Compare mode ----------
+  const cmp = {
+    cells: [],   // [{method, canvas, ctx, trials, fav, chords, anim}]
+    auto: false,
+    // Medium speed durations per method (faster than sim)
+    animMs: { 1: 750, 2: 500, 3: 500 },
+  };
+
+  function initCompare() {
+    const grid = document.getElementById('cmp-grid');
+    if (grid.children.length === 0) {
+      for (let m = 1; m <= 3; m++) {
+        const cell = document.createElement('div');
+        cell.className = 'compare-cell';
+        cell.innerHTML = `
+          <div class="c-title"><span>Method ${m}</span><b>P = ${['1/3','1/2','1/4'][m-1]}</b></div>
+          <canvas id="cv-${m}" width="300" height="300"></canvas>
+          <div class="c-stat"><span>Trials</span><b id="cmp-t-${m}">0</b></div>
+          <div class="c-stat"><span>Probability</span><b id="cmp-p-${m}">0.000</b></div>
+        `;
+        grid.appendChild(cell);
+        const c = cell.querySelector('canvas');
+        cmp.cells.push({ method: m, canvas: c, ctx: c.getContext('2d'), trials: 0, fav: 0, chords: [], anim: null });
+      }
+    }
+    resizeCompare();
+    drawCompareAll();
+  }
+
+  function resizeCompare() {
+    const cols = window.innerWidth >= 720 ? 3 : 1;
+    for (const cell of cmp.cells) {
+      const parentW = cell.canvas.parentElement.clientWidth;
+      const size = cols === 3 ? Math.min(parentW, 280) : Math.min(parentW, 340);
+      const dpr = window.devicePixelRatio || 1;
+      cell.canvas.width = size * dpr;
+      cell.canvas.height = size * dpr;
+      cell.canvas.style.width = size + 'px';
+      cell.canvas.style.height = size + 'px';
+      cell.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    drawCompareAll();
+  }
+
+  function drawCompareCell(cell) {
+    const w = cell.canvas.clientWidth, h = cell.canvas.clientHeight;
+    const ctx2 = cell.ctx;
+    ctx2.clearRect(0, 0, w, h);
+    const cx = w/2, cy = h/2;
+    const r = Math.min(w, h) * 0.44;
+    drawCircle(ctx2, cx, cy, r, THEME_DARK);
+    ctx2.lineWidth = 0.9;
+    for (const c of cell.chords) {
+      ctx2.strokeStyle = c.long ? THEME_DARK.chordLong : THEME_DARK.chordShort;
+      ctx2.beginPath();
+      ctx2.moveTo(cx + c.x1*r, cy + c.y1*r);
+      ctx2.lineTo(cx + c.x2*r, cy + c.y2*r);
+      ctx2.stroke();
+    }
+    if (cell.anim) {
+      drawAnimOn(ctx2, cell.anim, cx, cy, r, cmp.animMs[cell.method]);
+    }
+  }
+  function drawCompareAll() { cmp.cells.forEach(drawCompareCell); }
+
+  function updateCellStats(cell) {
+    const t = document.getElementById(`cmp-t-${cell.method}`);
+    const p = document.getElementById(`cmp-p-${cell.method}`);
+    if (t) t.textContent = cell.trials.toLocaleString();
+    if (p) p.textContent = (cell.trials ? cell.fav/cell.trials : 0).toFixed(3);
+  }
+
+  function commitChord(cell, c) {
+    cell.trials++;
+    if (c.long) cell.fav++;
+    cell.chords.push(c);
+    if (cell.chords.length > 300) cell.chords.shift();
+    updateCellStats(cell);
+  }
+
+  function animateCompareOne(cell, onDone) {
+    const chord = sampleChord(cell.method);
+    cell.anim = { method: cell.method, chord, startT: performance.now() };
+    const loop = () => {
+      if (!cell.anim) return;
+      const elapsed = performance.now() - cell.anim.startT;
+      drawCompareCell(cell);
+      if (elapsed >= cmp.animMs[cell.method]) {
+        const c = cell.anim.chord;
+        cell.anim = null;
+        commitChord(cell, c);
+        drawCompareCell(cell);
+        onDone && onDone();
+      } else {
+        requestAnimationFrame(loop);
+      }
+    };
+    requestAnimationFrame(loop);
+  }
+
+  function cmpRunN(n) {
+    if (n === 1) {
+      for (const cell of cmp.cells) {
+        cell.anim = null;
+        animateCompareOne(cell);
+      }
+      return;
+    }
+    // Batch for larger counts — skip anim
+    for (const cell of cmp.cells) {
+      cell.anim = null;
+      for (let i = 0; i < n; i++) {
+        const c = sampleChord(cell.method);
+        cell.trials++;
+        if (c.long) cell.fav++;
+        cell.chords.push(c);
+        if (cell.chords.length > 300) cell.chords.shift();
+      }
+      updateCellStats(cell);
+    }
+    drawCompareAll();
+  }
+  function cmpReset() {
+    cmpStopAuto();
+    for (const cell of cmp.cells) { cell.trials = 0; cell.fav = 0; cell.chords = []; cell.anim = null; }
+    for (let m=1;m<=3;m++) {
+      document.getElementById(`cmp-t-${m}`).textContent = '0';
+      document.getElementById(`cmp-p-${m}`).textContent = '0.000';
+    }
+    drawCompareAll();
+  }
+  function cmpStopAuto() {
+    cmp.auto = false;
+    for (const cell of cmp.cells) cell.anim = null;
+    const btn = document.getElementById('btn-cmp-auto');
+    if (btn) { btn.textContent = 'Auto Run all'; btn.classList.add('primary'); }
+    drawCompareAll();
+  }
+  function cmpStartAuto() {
+    cmp.auto = true;
+    document.getElementById('btn-cmp-auto').textContent = 'Stop';
+    document.getElementById('btn-cmp-auto').classList.remove('primary');
+    for (const cell of cmp.cells) {
+      const chain = () => {
+        if (!cmp.auto) return;
+        animateCompareOne(cell, chain);
+      };
+      chain();
+    }
+  }
+
+  document.querySelectorAll('[data-cmp-run]').forEach(b => {
+    b.addEventListener('click', () => cmpRunN(parseInt(b.getAttribute('data-cmp-run'),10)));
+  });
+  document.getElementById('btn-cmp-reset').addEventListener('click', () => { cmpStopAuto(); cmpReset(); });
+  document.getElementById('btn-cmp-auto').addEventListener('click', () => cmp.auto ? cmpStopAuto() : cmpStartAuto());
+
+  // ---------- Init ----------
+  setMethod(1);
+  updateStats();
+})();
+</script>
+</body>
+</html>

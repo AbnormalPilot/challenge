@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 110" role="img" aria-label="Monte Carlo estimator">
+  <rect width="680" height="110" fill="#000"/>
+  <style>
+    .base { font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", Georgia, "Times New Roman", serif; fill: #ffffff; }
+    .var  { font-style: italic; }
+    .label { fill: #9aa3b2; font-size: 13px; font-family: -apple-system, "Helvetica Neue", sans-serif; }
+    .hi   { fill: #2997ff; font-weight: 600; }
+  </style>
+  <g class="base" font-size="22">
+    <text x="24" y="30" class="label">Monte Carlo estimator and standard error</text>
+    <text x="30" y="72">
+      <tspan>P̂</tspan>
+      <tspan baseline-shift="sub" font-size="14" class="var">N</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">(1 / </tspan>
+      <tspan class="var">N</tspan>
+      <tspan>)</tspan>
+      <tspan dx="8" font-size="28">Σ</tspan>
+      <tspan baseline-shift="sub" font-size="12" class="var">i=1</tspan>
+      <tspan baseline-shift="super" font-size="12" class="var">N</tspan>
+      <tspan dx="8">𝟏{ |</tspan>
+      <tspan class="var">ℓ</tspan>
+      <tspan baseline-shift="sub" font-size="14" class="var">i</tspan>
+      <tspan>|</tspan>
+      <tspan dx="6">&gt;</tspan>
+      <tspan dx="6">√3 }</tspan>
+    </text>
+    <text x="30" y="104" font-size="18">
+      <tspan class="label">Standard error:</tspan>
+      <tspan dx="10">σ / √</tspan>
+      <tspan class="var">N</tspan>
+      <tspan dx="8" class="label">,</tspan>
+      <tspan dx="8">σ = √( P · (1 − P) )</tspan>
+      <tspan dx="10" class="label">,</tspan>
+      <tspan dx="8">95% CI half-width ≈ 1.96 · σ / √</tspan>
+      <tspan class="var">N</tspan>
+    </text>
+  </g>
+</svg>

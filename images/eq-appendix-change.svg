@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 190" role="img" aria-label="Change-of-variables derivation for Method 1 density">
+  <rect width="660" height="190" fill="#000"/>
+  <style>
+    .base { font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", Georgia, "Times New Roman", serif; fill: #ffffff; }
+    .var  { font-style: italic; }
+    .label { fill: #9aa3b2; font-size: 13px; font-family: -apple-system, "Helvetica Neue", sans-serif; }
+    .hi   { fill: #2997ff; font-weight: 600; }
+  </style>
+  <g class="base" font-size="22">
+    <text x="24" y="28" class="label">Change of variables from Δ (central angle) to d (chord-to-center distance)</text>
+
+    <text x="30" y="62">
+      <tspan class="var">d</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">cos( Δ / 2 )</tspan>
+      <tspan dx="20" class="hi">⇒</tspan>
+      <tspan dx="10">Δ</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">2 · arccos(</tspan>
+      <tspan class="var">d</tspan>
+      <tspan>)</tspan>
+    </text>
+
+    <text x="30" y="108">
+      <tspan>d Δ</tspan>
+      <tspan dx="8">/</tspan>
+      <tspan dx="8">d</tspan>
+      <tspan dx="2" class="var">d</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">− 2 / √( 1 − </tspan>
+      <tspan class="var">d</tspan>
+      <tspan baseline-shift="super" font-size="14">2</tspan>
+      <tspan> )</tspan>
+    </text>
+
+    <text x="30" y="158">
+      <tspan class="var">f</tspan>
+      <tspan baseline-shift="sub" font-size="14" class="var">d</tspan>
+      <tspan>(</tspan>
+      <tspan class="var">d</tspan>
+      <tspan>)</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10" class="var">f</tspan>
+      <tspan baseline-shift="sub" font-size="14">Δ</tspan>
+      <tspan>(Δ) · | d Δ / d</tspan>
+      <tspan class="var">d</tspan>
+      <tspan>|</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">(1/π) · 2 / √( 1 − </tspan>
+      <tspan class="var">d</tspan>
+      <tspan baseline-shift="super" font-size="14">2</tspan>
+      <tspan> )</tspan>
+    </text>
+  </g>
+</svg>

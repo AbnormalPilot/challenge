@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Method 2: Random Radius">
+  <rect width="240" height="240" fill="#000"/>
+  <!-- outer circle -->
+  <circle cx="120" cy="120" r="90" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1.2"/>
+  <!-- inscribed equilateral triangle -->
+  <polygon points="120,30 197.94,165 42.06,165" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1"/>
+  <!-- radius at angle 45°: B = (120 + 90*cos45, 120 + 90*sin45) = (183.64, 183.64) -->
+  <!-- midpoint on radius at d=0.35: M = (120 + 0.35*90*cos45, 120 + 0.35*90*sin45) = (142.28, 142.28) -->
+  <!-- perpendicular chord through M, half length = 90*sqrt(1-0.35^2)=84.29 -->
+  <!-- perp unit = (-sin45, cos45) = (-0.707, 0.707); half*perp = (-59.6, 59.6) -->
+  <!-- endpoints A=M+half*perp=(82.68, 201.88), B=M-half*perp=(201.88, 82.68) -->
+  <line x1="120" y1="120" x2="183.64" y2="183.64" stroke="#2997ff" stroke-opacity="0.75" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <!-- chord long (d<1/2) → green -->
+  <line x1="82.68" y1="201.88" x2="201.88" y2="82.68" stroke="#3ddc97" stroke-width="2.4"/>
+  <!-- midpoint dot -->
+  <circle cx="142.28" cy="142.28" r="5" fill="#2997ff"/>
+  <!-- right-angle indicator at M (small square) -->
+  <path d="M 135.2 135.2 L 140.5 140.5 L 146 135 L 140.6 129.5 Z" fill="none" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1"/>
+  <!-- d label on radius -->
+  <text x="128" y="132" fill="#9aa3b2" font-family="ui-monospace, SF Mono, Menlo, monospace" font-size="11" font-weight="700">d = 0.35</text>
+  <!-- caption -->
+  <text x="120" y="228" fill="#ffffff" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="12" font-weight="600" text-anchor="middle">Method 2 · Random Radius · P = 1/2</text>
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 220" role="img" aria-label="Method 1 derivation">
+  <rect width="620" height="220" fill="#000"/>
+  <style>
+    .base { font-family: "Latin Modern Math", "Cambria Math", "STIX Two Math", Georgia, "Times New Roman", serif; fill: #ffffff; }
+    .var  { font-style: italic; }
+    .hi   { fill: #2997ff; font-weight: 600; }
+    .res  { fill: #3ddc97; font-weight: 700; }
+    .label { fill: #9aa3b2; font-size: 13px; font-family: -apple-system, "Helvetica Neue", sans-serif; }
+  </style>
+  <g class="base" font-size="22">
+    <text x="24" y="34" class="label">Chord length in terms of minor central angle Δ ∈ [0, π]</text>
+    <text x="30" y="62">
+      <tspan>|</tspan><tspan class="var">ℓ</tspan><tspan>|</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">2 · sin( Δ / 2 )</tspan>
+    </text>
+
+    <text x="24" y="100" class="label">Long-chord condition in terms of Δ</text>
+    <text x="30" y="128">
+      <tspan>|</tspan><tspan class="var">ℓ</tspan><tspan>|</tspan>
+      <tspan dx="6">&gt;</tspan>
+      <tspan dx="6">√3</tspan>
+      <tspan dx="14" class="hi">⇔</tspan>
+      <tspan dx="10">sin( Δ/2 )</tspan>
+      <tspan dx="10">&gt;</tspan>
+      <tspan dx="10">√3 / 2</tspan>
+      <tspan dx="14" class="hi">⇔</tspan>
+      <tspan dx="10">Δ</tspan>
+      <tspan dx="6">&gt;</tspan>
+      <tspan dx="6">2π / 3</tspan>
+    </text>
+
+    <text x="24" y="166" class="label">Probability</text>
+    <text x="30" y="194">
+      <tspan>P</tspan>
+      <tspan baseline-shift="sub" font-size="14">1</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10">( π − 2π/3 ) / π</tspan>
+      <tspan dx="10">=</tspan>
+      <tspan dx="10" class="res">1 / 3</tspan>
+      <tspan dx="10" class="res">≈ 0.333</tspan>
+    </text>
+  </g>
+</svg>
