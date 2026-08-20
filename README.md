@@ -85,7 +85,7 @@ Let D = |OM|. Since M is uniform over the disk, P(long) equals the area ratio of
 ![Method 3 derivation](images/eq-method3.svg)
 
 ### 5.3 Distribution of D
-For uniform-in-area sampling, D has density `2d` on [0, 1] — compare with Method 2, which puts `d ~ Uniform[0, 1]` (density 1). The two methods apply the **same geometric condition** (`d < 1/2`) to **different distributions**:
+For uniform-in-area sampling, D has density `2d` on [0, 1] — compare with [Method 2](#4-method-2--random-radius-answer-12), which puts `d ~ Uniform[0, 1]` (density 1). The two methods apply the **same geometric condition** (`d < 1/2`) to **different distributions**:
 
 ![Integral verification — Methods 2 vs 3](images/eq-verify.svg)
 
@@ -133,7 +133,7 @@ For each method, draw N chords i.i.d. from the method's distribution and form th
 
 By the Strong Law of Large Numbers, `P̂_N → P` almost surely.
 
-**Expected convergence behavior (this simulator confirms empirically):**
+**Expected convergence behavior (confirmed empirically by [the simulator](#8-the-simulator)):**
 
 | Method | Theoretical | N = 1,000        | `σ / √N` at N = 10,000 |
 |:------:|:-----------:|:----------------:|:----------------------:|
@@ -147,7 +147,7 @@ All three empirical probabilities stabilize within their respective confidence i
 
 ## 8. The Simulator
 
-This repository contains a single-file (`index.html`) mobile-first web application that:
+This repository contains a single-file ([`index.html`](index.html)) mobile-first web application that:
 
 1. Visualizes each method with a step-by-step animation of its random mechanism:
    - **Method 1**: two endpoint dots appear on ∂C, the minor arc is highlighted with its central angle in degrees, then the chord grows between the endpoints (colored green if arc > 120°, red otherwise).
@@ -202,13 +202,13 @@ Check: `∫₀¹ 2 / (π · √(1 − d²)) dd = (2/π) · (π/2) = 1 ✓`.
 
 ![Integral verification of all three probabilities](images/eq-verify.svg)
 
-All three check against the geometric derivations in §§3–5.
+All three check against the geometric derivations in [§§3–5](#3-method-1--random-endpoints-answer-13).
 
 ---
 
 ## Running the Simulator
 
-```
+```bash
 # No build step. No backend.
 open index.html
 
