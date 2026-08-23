@@ -2,6 +2,8 @@
 
 *A Monte Carlo study of chord-length randomness and the non-uniqueness of "uniform random chord"*
 
+**Author:** Himanshu Dubey
+
 ![Three methods of Bertrand's paradox](images/overview.svg)
 
 ---
