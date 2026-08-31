@@ -4,7 +4,7 @@
 
 **Author:** Himanshu Dubey  
 **Date:** August 23, 2026  
-**Last Updated:** 2026-08-31 01:48:25 IST
+**Last Updated:** 2026-08-31 14:45:39 IST
 
 ![Three methods of Bertrand's paradox](images/overview.svg)
 
@@ -217,8 +217,8 @@ All three check against the geometric derivations in [§§3–5](#3-method-1--ra
 open index.html
 
 # or serve locally:
-python3 -m http.server 8000
-# then visit http://localhost:8000
+python3 -m http.server 8080
+# then visit http://localhost:8080
 ```
 
 Optimized for mobile; fully functional on projector/desktop; share via QR code for audience participation.
