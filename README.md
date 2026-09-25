@@ -5,7 +5,6 @@
 **Author:** Himanshu Dubey  
 **Date:** August 23, 2026  
 **Last Updated:** 2026-08-31 14:45:39 IST
-
 ![Three methods of Bertrand's paradox](images/overview.svg)
 
 ---
